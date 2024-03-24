@@ -11,9 +11,6 @@ export class CreateUserDTO {
     @IsEmail()
     email: string
     
-    @IsString()
-    contact: string
-    
     @IsStrongPassword({
         minLength: 6,
         minUppercase: 1,
