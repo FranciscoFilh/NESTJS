@@ -1,0 +1,28 @@
+**************************************************************************
+--------------------------  USUARIO  -------------------------------------
+name: string
+email: string
+password: string
+=> A senha deve ter pelo menos 6 caracteres e conter uma letra maiuscula e uma letra minuscula
+
+---------------------------  CARROS  --------------------------------------
+brand:string
+model:string
+year: string
+km: string 
+price String
+urlImage String
+favorite: boolean
+
+*****************************************************************************
+****************************  ROTAS  ****************************************
+Usuarios = "/users"
+Carros = "/cars"
+
+*****************************************************************************
+**************************  OBSERVACAO  *************************************
+=> atividade em dupla: 
+* Francisco (back-end)
+* Hemerson (front-end)
+
+*****************************************************************************
