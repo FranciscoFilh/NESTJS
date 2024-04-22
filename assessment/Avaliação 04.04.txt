@@ -1,0 +1,1 @@
+Eu como gerente de produção preciso de uma API onde eu possa: listar, cadastrar, alterar e deletar, os produtos que entram para uma venda.
