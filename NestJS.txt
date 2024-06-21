@@ -1,0 +1,214 @@
+1. instalação do componente/framework
+npm install -g @nestjs/cli
+
+2. criar o ambiente do projeto. vai criar a estrutura de pastas do projeto.
+obs: caso esteja dentro da pasta do projeto colocar um ponto final no lugar do <nome do projeto>
+npx nest new <nome do projeto>
+
+3. escolha o gerenciador de pacotes da sua preferencia
+-> npm
+   yarn
+   pnpm
+
+4. apos instalação devemos editar o package.json alterando o script de execução do DEV.
+onde tem esse: "start:dev": "nest start --watch",
+altera para: "dev": "nest start --watch",
+
+5. validação do funcionamento do serviço
+npm run dev
+em seguida abre o insomnia e testa http://localhost:3000
+
+6. criar pasta do app que será implementado, dentro da pasta 'src'
+Ex: pasta Users
+
+7. dentro da pasta do app criar os três arquivos do ambiente
+users.controller.ts
+users.module.ts
+users.servide.ts
+
+8. primeiro configure o arquivo users.module.ts
+obs: sempre inicie pelo "module.ts"
+modelo de base do Module:
+============================================
+import { Module } from "@nestjs/common";
+@Module({
+    imports:[],
+    exports: [],
+    controllers:[],
+    providers:[],    
+})
+export class UsersModule {
+
+}
+============================================
+
+9. em seguida configure o arquivo de controller.ts
+modelo de base do Controller:
+============================================
+import { Controller } from "@nestjs/common";
+
+@Controller()
+export class UsersController {
+
+}
+============================================
+
+
+10. um Controller pode receber como argumento a rota do seu endpoint
+Ex 01: @Controller()
+Ex 02: @Controller('users')
+Ex 03: @Controller('contact')
+Ex 04: @Controller('sales')
+
+11. criar os endpoints da API: GET, POST, PUT, PATCH e DELETE
+
+12. declarar o Controller no Module
+controllers:[UsersController],
+
+13. declarar no app.module.ts o seu arquivo de Module
+imports: [UsersModule],
+
+14. configure agora o arquivo de service.ts
+modelo de base do :
+============================================
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export class UsersService {
+
+}
+============================================
+
+15. agora é hora de instalar e criar os DTOs
+npm i --save class-validator class-transformer
+npm install @nestjs/mapped-types
+-> para o patch
+-> usar o PartialType
+
+16. criar a pasta e os arquivos do ambiente do DTO
+pasta: users/dto
+arquivo: create-users.dto.ts
+
+17. configure agora os arquivos do DTO
+modelo de base do CreateUserDTO:
+============================================
+import { IsEmail, IsString, IsStrongPassword } from "class-validator";
+
+export class CreateUserDTO {
+    
+    @IsString()
+    name: string
+
+    @IsEmail()
+    email: string
+
+    @IsString()
+    cpf: string
+
+    @IsStrongPassword({
+        minLength: 6,
+        minUppercase: 1,
+        minLowercase: 0,
+        minNumbers: 5,
+        minSymbols: 0,
+    })
+    password: string
+    
+}
+============================================
+18. validar se os DTOs estão criticando as informações enviadas
+____________________________________________
+| 19. criar e instalar o ambiente de ORM prisma
+| npm install @prisma/client   // produção
+| npm install -D prisma	     // desenvolvimento
+|
+| 20. iniciar o prisma
+| npx prisma init
+|
+| 21. criar o banco de dados referente a sua aplicação
+| Ex: Users
+|
+| 22. alterar o arquivo .env para o padrão de conexão que você vai utilizar
+| Ex: DATABASE_URL="postgresql://postgres:suporte123@localhost:5432/Users"
+|
+| 23. no arquivo schema.prisma você deve verificar o provider e criar seus models
+| modelo de Model abaixo:
+| ==============================================
+| generator client {
+|   provider = "prisma-client-js"
+| }
+|
+| datasource db {
+|   provider = "postgresql"
+|   url      = env("DATABASE_URL")
+| }
+|
+| model user_login {
+|   id Int @id @default(autoincrement())
+|   name String
+|   email String
+|   cpf String
+|   password String
+| }
+| ==============================================
+| 24. fazer o migrate do arquivo schema.prima 
+| npx prisma migrate dev --name init
+|
+| 25. dentro da pasta 'src' você deve criar uma pasta chamada prisma
+| 
+| 26. na pasta prisma você deve criar dois arquivos:
+| prisma.module.ts
+| prisma.service.ts
+|
+| 27. abaixo estrutura padrão de uma arquivo prisma.module.ts
+| ===========================================
+| import { Module } from "@nestjs/common";
+|
+| @Module({
+|     providers: [],
+|     exports: [],
+| })
+| export class PrismaModule {
+|
+| }
+| ===========================================
+|
+| 28. abaixo estrutura padrão de uma arquivo prisma.service.ts
+| ===========================================
+| import { Injectable, OnModuleInit } from "@nestjs/common";
+| import { PrismaClient } from "@prisma/client"
+|
+| @Injectable()
+| export class PrismaService extends PrismaClient implements OnModuleInit {
+| }
+| ===========================================
+| 
+| 29. para criar uma conexão com o DB faça assim:
+| async onModuleInit() {
+|      await this.$connect()   
+| }
+| 
+| 30. para encerrar uma conexão com o DB faça assim:
+| async enableShutdownHooks(app: INestApplication) {
+|     process.on('beforeExit', async() => {
+|     await app.close()
+|   })
+| }
+|
+| 31. no arquivo de module do prisma você deve incluir o PrismaService no provider e no export:
+| @Module({
+|     providers: [PrismaService],
+|     exports: [PrismaService],
+| })
+|___________________________________________
+____________________________________________
+|32. criar e instalar o ambiente de ORM typeorm
+|* Instalar typeorm
+|  npm install --save @nestjs/typeorm typeorm mysql
+|
+|* configuracao de segurancado sistema
+|  npm install @nestjs/config
+|
+|* conectar com a tabela
+|  npm install pg --save
+|___________________________________________
